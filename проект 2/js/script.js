@@ -12,47 +12,89 @@
 
 5) Добавить нумерацию выведенных фильмов */
 
-"use strict";
+document.addEventListener("DOMContentLoaded", function () {
+  "use strict";
 
-const movieDB = {
-  movies: [
-    "Логан",
-    "Лига справедливости",
-    "Ла-ла лэнд",
-    "Одержимость",
-    "Скотт Пилигрим против...",
-  ],
-};
+  const movieDB = {
+    movies: [
+      "Логан",
+      "Лига справедливости",
+      "Ла-ла лэнд",
+      "Одержимость",
+      "Скотт Пилигрим против...",
+    ],
+  };
 
-// First task
-const advert = document.querySelector(".promo__adv");
-advert.innerHTML = "";
+  // First task
+  const advert = document.querySelector(".promo__adv");
+  advert.innerHTML = "";
 
-// Second task
-const genre = document.querySelector(".promo__genre");
-genre.innerHTML = "<div class='promo__genre'>Драмма</div>";
+  // Second task
+  const genre = document.querySelector(".promo__genre");
+  genre.innerHTML = "<div class='promo__genre'>Драмма</div>";
 
-// Third task
-const promoBg = document.querySelector(".promo__bg");
-promoBg.style.backgroundImage = "url(img/bg.jpg)";
+  // Third task
+  const promoBg = document.querySelector(".promo__bg");
+  promoBg.style.backgroundImage = "url(img/bg.jpg)";
 
-// Forth task
+  // Task forth,seven
 
-movieDB.movies.sort();
+  let movieList = document.querySelector(".promo__interactive-list");
 
-function renewalMovies() {
-  const movieElements = document.querySelectorAll(".promo__interactive-item"),
-    movieList = document.querySelector(".promo__interactive-list");
+  renewalMovies(movieList, movieDB.movies);
 
-  movieElements.forEach((item) => item.remove()); //  movieElements.innerHtml = "";
+  // Task five,six,eight
 
-  movieDB.movies.forEach((key, index) => {
-    movieList.innerHTML += `
-		<li class="promo__interactive-item">${index+1} ${key}
+  const addForm = document.querySelector(".add"),
+    addinput = addForm.querySelector(".adding__input"),
+    addCheckbox = addForm.querySelector('[type = "checkbox"]');
+
+  addForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    let inputValue = addinput.value.trim();
+
+    if (inputValue) {
+      if (inputValue && inputValue.length > 21) {
+        inputValue = `${inputValue.slice(0, 22)}...`;
+      }
+
+      if (addCheckbox.checked) {
+        console.log("Добавляем любимый фильм");
+			}
+			
+      movieDB.movies.push(inputValue);
+    }
+
+    renewalMovies(movieList, movieDB.movies);
+    event.target.reset();
+  });
+
+  // Function block
+  function renewalMovies(filmsList, parent) {
+    parent.sort();
+
+    filmsList.innerHTML = "";
+
+    parent.forEach((key, index) => {
+      filmsList.innerHTML += `
+		<li class="promo__interactive-item">${index + 1} ${key}
 				<div class="delete"></div>
 		</li>
 		`;
-  });
-}
+    });
 
-renewalMovies();
+    document.querySelectorAll(".delete").forEach((item, index) =>
+      item.addEventListener("click", function (event) {
+        event.preventDefault();
+        console.log("done");
+
+        let isParentElement = item.parentElement;
+        isParentElement.remove();
+        parent.splice(index, 1);
+
+        renewalMovies(filmsList, parent);
+      })
+    );
+  }
+});
