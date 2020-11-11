@@ -1,3 +1,5 @@
+// Tabs ==========================================================
+
 const contentBlocks = document.querySelectorAll(".tabcontent"),
   tabsItems = document.querySelectorAll(".tabheader__item"),
   tabsParent = document.querySelector(".tabheader__items");
@@ -32,3 +34,58 @@ function choosePreferedCategory() {
 hideContentTabs();
 showContentTabs();
 choosePreferedCategory();
+
+// Timer =========================================
+
+const deadline = "2020-12-11";
+
+function getTimeRemaining(endtime) {
+  const deltaTime = Date.parse(endtime) - Date.parse(new Date()),
+    days = Math.floor(deltaTime / (1000 * 60 * 60 * 24)),
+    hours = Math.floor((deltaTime / (1000 * 60 * 60)) % 24),
+    minutes = Math.floor((deltaTime / (1000 * 60)) % 60),
+    seconds = Math.floor((deltaTime / 1000) % 60);
+
+  console.log(days);
+  return {
+    total: deltaTime,
+    days,
+    hours,
+    minutes,
+    seconds,
+  };
+}
+
+function getZero(number) {
+  if (+number <= 9) {
+    return `0${number}`;
+  } else {
+    return number;
+  }
+}
+
+function setClock(selector, endtime) {
+  const parent = document.querySelector(selector),
+    days = parent.querySelector("#days"),
+    hours = parent.querySelector("#hours"),
+    minutes = parent.querySelector("#minutes"),
+    seconds = parent.querySelector("#seconds"),
+    timeInterval = setInterval(updateClock, 1000);
+
+  updateClock();
+
+  function updateClock() {
+    const t = getTimeRemaining(endtime);
+
+    days.textContent = getZero(t.days);
+    hours.textContent = getZero(t.hours);
+    minutes.textContent = getZero(t.minutes);
+    seconds.textContent = getZero(t.seconds);
+
+    if (+t.total <= 0) {
+      clearInterval(timeInterval);
+    }
+  }
+}
+
+setClock(".timer", deadline);
