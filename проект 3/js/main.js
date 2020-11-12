@@ -89,3 +89,121 @@ function setClock(selector, endtime) {
 }
 
 setClock(".timer", deadline);
+
+// Modal =========================================
+
+// Values
+
+const openModalBtns = document.querySelectorAll("[data-modal]"),
+  closeModalBtn = document.querySelector("[data-close]"),
+  modalWindow = document.querySelector(".modal");
+
+// Main
+
+openModalBtns.forEach((item) =>
+  item.addEventListener("click", function (event) {
+    event.preventDefault();
+
+    openModal();
+  })
+);
+
+closeModalBtn.addEventListener("click", function (event) {
+  event.preventDefault();
+
+  closeModal();
+});
+
+modalWindow.addEventListener("click", function (event) {
+  if (event.target === modalWindow) {
+    closeModal();
+  }
+});
+
+document.addEventListener("keydown", function (event) {
+  if (modalWindow.classList.contains("show") && event.code === "Escape") {
+    closeModal();
+  }
+});
+
+const modalTimerId = setTimeout(openModal, 60000);
+
+window.addEventListener("scroll", showModalByScroll);
+
+// Function
+
+function closeModal() {
+  modalWindow.classList.remove("show");
+  document.body.classList.remove("no_scroll");
+}
+
+function openModal() {
+  modalWindow.classList.add("show");
+  document.body.classList.add("no_scroll");
+
+  clearInterval(modalTimerId);
+}
+
+function showModalByScroll() {
+  const htmlPage = document.documentElement;
+  if (htmlPage.scrollTop + htmlPage.clientHeight >= htmlPage.scrollHeight) {
+    openModal();
+    window.removeEventListener("scroll", showModalByScroll);
+  }
+}
+
+// Cards =========================================
+
+class MenuCard {
+  constructor(src, alt, title, description, price, parentSelector, ...classes) {
+    this.src = src;
+    this.alt = alt;
+    this.title = title;
+    this.description = description;
+    this.parent = document.querySelector(parentSelector);
+    this.price = price;
+    this.transactionCourse = 27;
+    this.classes = classes;
+
+    this.changePrice();
+  }
+
+  changePrice() {
+    this.price = this.price * this.transactionCourse;
+  }
+
+  renderCard() {
+    const element = document.createElement("div");
+
+    if (this.classes.length == 0) {
+      this.defaultClass = "menu__item";
+      element.classList.add(this.defaultClass);
+    } else {
+      this.classes.forEach((item) => element.classList.add(item));
+    }
+
+    element.innerHTML = `
+			<img src=${this.src} alt=${this.alt} />
+			<h3 class="menu__item-subtitle">${this.title}</h3>
+			<div class="menu__item-descr">${this.description}</div>
+			<div class="menu__item-divider"></div>
+			<div class="menu__item-price">
+				<div class="menu__item-cost">Цена:</div>
+				<div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+			</div>
+		`;
+
+    this.parent.append(element);
+  }
+}
+
+new MenuCard(
+  "img/tabs/elite.jpg",
+  "elite",
+  "Меню 'Шлюха'",
+  `В меню “Премиум” мы используем не только красивый дизайн упаковки,
+	но и качественное исполнение блюд. Красная рыба, морепродукты,
+	фрукты - ресторанное меню без похода в ресторан!`,
+  12,
+  ".menu__field .container"
+).renderCard();
